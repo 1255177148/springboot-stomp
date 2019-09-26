@@ -16,7 +16,6 @@
         <div class="row">
             <div class="col-md-6">
                 <form class="form-inline">
-                    <input placeholder="url" id="addr" value="/stomp"/>
                     <div class="form-group">
                         <label for="connect">注册用户，请输入你的账号：</label>
                         <input type="text" id="userName" class="form-control" value="tony" placeholder="请输入账号"/>
@@ -77,11 +76,8 @@
         }, function (frame) {
             setConnected(true);
             console.log("connected:" + frame);
-            // stompClient.subscribe("/topic/sub", function (data) {
-            //     showGreeting(data.body);
-            // });
             stompClient.subscribe("/user/" + $("#userName").val() +"/queue", function (data) {
-                var mes = JSON.stringify(data.body);
+                var mes = data.body;
                 showGreeting(mes);
             });
         });
@@ -103,7 +99,8 @@
     }
     function showGreeting(message) {
         console.log("显示信息：" + message);
-        $("#greetings").append("<tr><td>" + message + "</td></tr>");
+        var json = JSON.parse(message).message;
+        $("#greetings").append("<tr><td>" + json + "</td></tr>");
     }
     $(function () {
         $("form").on("submit", function (e) {
@@ -119,7 +116,6 @@
             send();
         });
         $("#confirm").click(function () {
-            userName = $("#userName").val();
             connect();
         });
     });
